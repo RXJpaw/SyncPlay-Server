@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "CommonJS",
+        "strict": true,
+        "jsx": "preserve",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "noImplicitAny": false,
+        "skipLibCheck": true,
+        "declaration": false,
+        "sourceMap": false,
+        "allowJs": true,
+        "outDir": "./build"
+    },
+    "include": ["src/**/*.ts", "interfaces/**/*.ts"],
+    "exclude": ["node_modules"]
+}

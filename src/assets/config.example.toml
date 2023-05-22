@@ -1,0 +1,16 @@
+#Replace 127.0.0.1 in host with one of the static IPv4 addresses bound to your server.
+#When using local addresses like 127.0.0.1 the server will not conntect to the internet.
+#Changing the port is not necessary, leaving it at 3515 will make you able to share the server address without the port.
+#The syncplay-client currently doesn't support connections without entering a password. Setting the password is necessary.
+[server]
+    host = "127.0.0.1"
+    port = "3515"
+    password = ""
+
+#This is required. If you don't set a certificate the server will not be reachable.
+#Normally the privatekey is either privkey.pem or *.key and the fullchain is either fullchain.pem or *.crt.
+#If you didn't protect your privatekey with a passphrase when the certificate was issued just leave the field empty.
+[certificate]
+    privkey = ""
+    fullchain = ""
+    passphrase = ""
