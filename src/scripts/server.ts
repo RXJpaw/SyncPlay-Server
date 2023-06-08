@@ -180,8 +180,10 @@ fastify.register(async (fastify) => {
      * Websocket
      */
     fastify.get('/:version/websocket', { websocket: true }, (connection, req) => {
+        connection['_id'] = crypto.randomUUID()
+
         const Connection = Connections.select(req.id, connection) || Connections.create(req.id, connection)
-        const KeepAlive = setTimeout(() => KeepAlive.unref() && Connection.destroy(), 10000)
+        const KeepAlive = setTimeout(() => connection.socket.close(1000), 10000)
         req.socket.setKeepAlive(true)
 
         connection.socket.on('message', async (buffer) => {
@@ -212,10 +214,13 @@ fastify.register(async (fastify) => {
         }, 2000)
 
         connection.socket.on('close', () => {
-            Connection.destroy()
-
             KeepAlive.unref()
             PingLoop.unref()
+
+            //If the connection id doesn't match the user already reconnected.
+            if (Connection.getDuplex()?.['_id'] !== connection['_id']) return
+
+            Connection.destroy()
         })
     })
 })
