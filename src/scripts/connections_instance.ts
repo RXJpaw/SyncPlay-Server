@@ -34,12 +34,12 @@ export const ConnectionsInstance = () => {
 
     const ConnectionBuilder = (userId: string) => {
         //Destroy the user's connection.
-        const destroy = () => {
+        const destroy = (code: number = 1000) => {
             if (!_connections[userId]) return false
 
             leaveRoom()
 
-            _connections[userId].duplex.destroy()
+            _connections[userId].duplex.socket.close(code)
             delete _connections[userId]
 
             return true

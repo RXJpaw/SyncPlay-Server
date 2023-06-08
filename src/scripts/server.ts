@@ -181,6 +181,8 @@ fastify.register(async (fastify) => {
      */
     fastify.get('/:version/websocket', { websocket: true }, (connection, req) => {
         const Connection = Connections.select(req.id, connection) || Connections.create(req.id, connection)
+        const KeepAlive = setTimeout(() => KeepAlive.unref() && Connection.destroy(), 10000)
+        req.socket.setKeepAlive(true)
 
         connection.socket.on('message', async (buffer) => {
             const message = HandleError(JSON.parse, buffer.toString())
@@ -192,10 +194,28 @@ fastify.register(async (fastify) => {
 
                     return Connection.setTime(Math.floor(message.data))
                 }
+                case 'Pong': {
+                    if (typeof message.data !== 'string') return
+
+                    return KeepAlive.refresh()
+                }
             }
         })
+
+        const PingLoop = setInterval(() => {
+            connection.socket.send(
+                JSON.stringify({
+                    event: 'Ping',
+                    data: crypto.randomUUID()
+                })
+            )
+        }, 2000)
+
         connection.socket.on('close', () => {
             Connection.destroy()
+
+            KeepAlive.unref()
+            PingLoop.unref()
         })
     })
 })
